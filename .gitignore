@@ -2,11 +2,11 @@ pom.xml
 pom.xml.asc
 *.jar
 *.class
+config.clj
 /lib/
 /classes/
 /target/
 /checkouts/
-/resources/private/config.clj
 .lein-deps-sum
 .lein-repl-history
 .lein-plugins/
