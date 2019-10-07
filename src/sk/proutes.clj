@@ -3,7 +3,9 @@
             [sk.proutes.inventario :as inventario]
             [sk.proutes.compras :as compras]
             [sk.proutes.ordenes :as ordenes]
-            [sk.proutes.reportes :as reportes]))
+            [sk.proutes.consultas :as consultas]
+            [sk.proutes.reportes :as reportes]
+            [sk.proutes.barcodes :as barcodes]))
 
 (defroutes proutes
   ;; Start inventario
@@ -28,7 +30,19 @@
   (POST "/ordenes/save" request [] (ordenes/ordenes-save request))
   (POST "/ordenes/delete" request [] (ordenes/ordenes-delete request))
   ;; End ordenes
+  ;; Start consultas
+  (GET "/consultas/inventario" request [] (consultas/inventario request))
+  (GET "/consultas/recibido" request [] (consultas/recibido request))
+  (GET "/consultas/enviado" request [] (consultas/enviado request))
+  (GET "/consultas/reordenar" request [] (consultas/reordenar request))
+  ;; End consultas
   ;; Start reportes
-  (GET "/reportes" request [] (reportes/reportes request))
+  (GET "/reportes/inventario" request [] (reportes/inventario request))
+  (GET "/reportes/recibido" request [] (reportes/recibido request))
+  (GET "/reportes/enviado" request [] (reportes/enviado request))
+  (GET "/reportes/reordenar" request [] (reportes/reordenar request))
   ;; End reportes
+  ;; Start barcodes
+  (GET "/barcodes" request [] (barcodes/barcodes request))
+  ;; End barcodes
   )

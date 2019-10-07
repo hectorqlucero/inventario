@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% style "/easyui/themes/default/easyui.css" %}
+{% style "/easyui/themes/icon.css" %}
+{% style "/easyui/themes/color.css" %}
+{% endblock %}
+
+{% block content %}
+<div class="table-responsive">
+  <table class="table table-striped w-auto">
+    <caption style="caption-side: top;">{{ title }}</caption>
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">FECHA</th>
+        <th scope="col">PRODUCTO</th>
+        <th scope="col">#ENVIADOS</th>
+        <th scope="col">NOMBRE</th>
+        <th scope="col">PATERNO</th>
+        <th scope="col">MATERNO</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        <td>{{ forloop.counter }}
+        <td>{{ row.orden_fecha }}</td>
+        <td>{{ row.producto_id }}</td>
+        <td>{{ row.enviado_numero }}</td>
+        <td>{{ row.nombre }}</td>
+        <td>{{ row.apell_paterno }}</td>
+        <td>{{ row.apell_materno }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% script "/easyui/jquery.easyui.min.js" %}
+{% script "/easyui/plugins/jquery.datagrid.js" %}
+{% script "/easyui/datagrid-detailview.js" %}
+{% script "/js/jquery.maskedinput.min.js" %}
+{% script "/easyui/locale/easyui-lang-es.js" %}
+{% endblock %}
