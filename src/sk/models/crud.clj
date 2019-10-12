@@ -135,5 +135,9 @@
 (defn get-table-columns [table]
   "Get table column names in a vector"
   (let [the-fields (Query db (str "DESCRIBE " table))
-        tfields (map #(:field %) the-fields)]
-    (into [] tfields)))
+        tfields (map #(keyword (:field %)) the-fields)]
+    tfields))
+
+(defn build-postvars [table params]
+  (let [fields (get-table-columns table)]
+    (into {} (map (fn [x] (if (x params) {x (str (x params))})) fields))))
