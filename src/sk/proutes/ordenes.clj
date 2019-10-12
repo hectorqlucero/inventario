@@ -68,7 +68,7 @@
   (let [row (Query db [form-ordenes-sql order_id])]
     (generate-string (first row))))
 ;; end form-ordenes
-(form-ordenes 1)
+
 (defn ordenes-save [{params :params}]
   (let [id (fix-id (:id params))
         producto_id (:producto_id params)
