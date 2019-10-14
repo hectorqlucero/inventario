@@ -7,31 +7,46 @@
 {% endblock %}
 
 {% block content %}
-<div class="table-responsive">
-  <table class="table table-striped w-auto">
+<div class="table-responsive table-sm">
+  <table class="table w-auto">
     <caption style="caption-side: top;">{{ title }}</caption>
     <thead class="thead-dark">
       <tr>
-        <th scope="col">#</th>
         <th scope="col">FECHA</th>
-        <th scope="col">PRODUCTO</th>
-        <th scope="col">#ENVIADOS</th>
+        <th scope="col">ENVIADO</th>
         <th scope="col">NOMBRE</th>
         <th scope="col">PATERNO</th>
         <th scope="col">MATERNO</th>
       </tr>
     </thead>
     <tbody>
-      {% for row in rows %}
+      {% for prow in prows %}
       <tr>
-        <td>{{ forloop.counter }}
-        <td>{{ row.orden_fecha }}</td>
-        <td>{{ row.producto_id }}</td>
-        <td>{{ row.enviado_numero }}</td>
-        <td>{{ row.nombre }}</td>
-        <td>{{ row.apell_paterno }}</td>
-        <td>{{ row.apell_materno }}</td>
+        <th colspan=4>{{ prow.producto_id }}</th>
       </tr>
+        {% for row in rows %}
+        {% ifequal prow.producto_id row.producto_id %}
+        <tr>
+          <td>{{ row.orden_fecha }}</td>
+          <td align="right">{{ row.enviado_numero }}</td>
+          <td>{{ row.nombre }}</td>
+          <td>{{ row.apell_paterno }}</td>
+          <td>{{ row.apell_materno }}</td>
+        </tr>
+        {% endifequal %}
+        {% endfor %}
+        {% for trow in trows %}
+        {% ifequal prow.producto_id trow.producto_id %}
+        <tr class="table-secondary">
+          <td>Total:</td>
+          <td align="right">{{ trow.total }}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        {% endifequal %}
+        {% endfor %}
+        <tr><td colspan=3>&nbsp;</td></tr>
       {% endfor %}
     </tbody>
   </table>

@@ -4,7 +4,6 @@
             [sk.proutes.compras :as compras]
             [sk.proutes.ordenes :as ordenes]
             [sk.proutes.consultas :as consultas]
-            [sk.proutes.reportes :as reportes]
             [sk.proutes.barcodes :as barcodes]))
 
 (defroutes proutes
@@ -36,12 +35,6 @@
   (GET "/consultas/enviado" request [] (consultas/enviado request))
   (GET "/consultas/reordenar" request [] (consultas/reordenar request))
   ;; End consultas
-  ;; Start reportes
-  (GET "/reportes/inventario" request [] (reportes/inventario request))
-  (GET "/reportes/recibido" request [] (reportes/recibido request))
-  (GET "/reportes/enviado" request [] (reportes/enviado request))
-  (GET "/reportes/reordenar" request [] (reportes/reordenar request))
-  ;; End reportes
   ;; Start barcodes
   (GET "/barcodes" request [] (barcodes/barcodes request))
   ;; End barcodes
