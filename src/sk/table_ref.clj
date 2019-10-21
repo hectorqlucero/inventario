@@ -13,8 +13,6 @@
     (.mkdir (io/file dir))
     dir))
 
-(def o-stream (io/output-stream (str temp-dir "/stream")))
-
 (defn create-html [file]
   (str "<img src='" file "'>"))
 
@@ -33,9 +31,7 @@
 
 (defn get-barcodes []
   (let [rows (Query db ["SELECT id,p_etiqueta FROM productos ORDER BY id"])
-        result (map #(assoc % :id (create-barcode (:id %))) rows)
-        ;;result (into {} (map #(:etiqueta (:p_etiqueta %) (create-barcode (:id %))) rows))
-        ]
+        result (map #(assoc % :id (create-barcode (:id %))) rows)]
     (render-file "sk/routes/barcodes/index.html" {:title "Codigo de barras"
                                                   :ok (get-session-id)
                                                   :data result})))
