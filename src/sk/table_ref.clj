@@ -1,7 +1,45 @@
 (ns sk.table_ref
   (:require [sk.models.crud :refer [db Query]]
-            [sk.models.util :refer [parse-int current_year]]
-            [compojure.core :refer [defroutes GET]]))
+            [sk.models.util :refer [zpl parse-int current_year get-session-id]]
+            [selmer.parser :refer [render-file]]
+            [clojure.java.io :as io]
+            [ondrs.barcode :refer :all]
+            [compojure.core :refer [defroutes GET]])
+  (:import (net.sourceforge.barbecue Barcode)))
+
+;; start barcode
+(def temp-dir
+  (let [dir (str (System/getProperty "java.io.tmpdir") "/barcodes/")]
+    (.mkdir (io/file dir))
+    dir))
+
+(def o-stream (io/output-stream (str temp-dir "/stream")))
+
+(defn create-html [file]
+  (str "<img src='" file "'>"))
+
+(defn generate-barcode [id]
+  (let [barcode (generate :code128 id)]
+    (doto barcode
+      (.setBarHeight 50)
+      (.setBarWidth 2))
+    barcode))
+
+(defn create-barcode [id]
+  (let [id (zpl id 8) 
+        barcode (generate-barcode id)
+        result (write! barcode (str temp-dir id ".jpg"))]
+    (str "/uploads/" id ".jpg")))
+
+(defn get-barcodes []
+  (let [rows (Query db ["SELECT id,p_etiqueta FROM productos ORDER BY id"])
+        result (map #(assoc % :id (create-barcode (:id %))) rows)
+        ;;result (into {} (map #(:etiqueta (:p_etiqueta %) (create-barcode (:id %))) rows))
+        ]
+    (render-file "sk/routes/barcodes/index.html" {:title "Codigo de barras"
+                                                  :ok (get-session-id)
+                                                  :data result})))
+;; End barcode
 
 ;; Start get_users
 (def get_users-sql

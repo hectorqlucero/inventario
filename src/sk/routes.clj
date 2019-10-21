@@ -13,6 +13,7 @@
   (GET "/table_ref/years/:pyears/:nyears" [pyears nyears] (generate-string (table_ref/years pyears nyears)))
   (GET "/table_ref/get_productos" [] (generate-string (table_ref/get-productos)))
   (GET "/table_ref/get_provedores" [] (generate-string (table_ref/get-provedores)))
+  (GET "/table_ref/barcodes" [] (table_ref/get-barcodes))
   ;; End table_ref
   ;; Start home
   (GET "/" request [] (home/main request))
