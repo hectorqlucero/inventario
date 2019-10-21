@@ -19,6 +19,7 @@
 (defn generate-barcode [id]
   (let [barcode (generate :code128 id)]
     (doto barcode
+      (.setDrawingText false)
       (.setBarHeight 50)
       (.setBarWidth 2))
     barcode))
