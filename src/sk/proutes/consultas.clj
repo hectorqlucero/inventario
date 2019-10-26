@@ -1,16 +1,7 @@
 (ns sk.proutes.consultas
-  (:require [cheshire.core :refer [generate-string]]
-            [clojure.java.io :as io]
-            [selmer.parser :refer [render-file]]
-            [noir.session :as session]
-            [sk.models.crud :refer [db Query Save Delete]]
-            [sk.models.grid :refer :all]
-            [sk.models.util :refer [capitalize-words
-                                    update-inventory
-                                    format-date-internal
-                                    parse-int
-                                    fix-id
-                                    get-session-id]]))
+  (:require [selmer.parser :refer [render-file]]
+            [sk.models.crud :refer [db Query]]
+            [sk.models.util :refer [get-session-id]]))
 
 ;; Start inventario
 (def inventario-sql

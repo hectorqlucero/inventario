@@ -1,12 +1,13 @@
 (ns sk.proutes.ordenes
   (:require [cheshire.core :refer [generate-string]]
             [selmer.parser :refer [render-file]]
-            [noir.session :as session]
-            [sk.models.crud :refer [db Query Save Delete]]
+            [sk.models.crud :refer [db 
+                                    build-postvars 
+                                    Query 
+                                    Save 
+                                    Delete]]
             [sk.models.grid :refer :all]
-            [sk.models.util :refer [capitalize-words
-                                    update-inventory
-                                    format-date-internal
+            [sk.models.util :refer [update-inventory
                                     parse-int
                                     fix-id
                                     get-session-id]]))
@@ -72,13 +73,7 @@
 (defn ordenes-save [{params :params}]
   (let [id (fix-id (:id params))
         producto_id (:producto_id params)
-        postvars {:id id
-                  :nombre (capitalize-words (:nombre params))
-                  :apell_paterno (capitalize-words (:apell_paterno params))
-                  :apell_materno (capitalize-words (:apell_materno params))
-                  :producto_id producto_id
-                  :enviado_numero (:enviado_numero params)
-                  :orden_fecha (format-date-internal (:orden_fecha params))}
+        postvars (build-postvars "orders" params)
         result (Save db :orders postvars ["id = ?" id])]
     (if (seq result)
       (do

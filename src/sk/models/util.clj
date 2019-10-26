@@ -645,4 +645,9 @@
                     :inv_enviado (str enviado)
                     :inv_en_mano (str inv_en_mano)}]
       (Update db :productos postvars ["id =?" (str producto_id)]))))
+
+(defn update-all-inventory []
+  (let [rows (Query db "SELECT id FROM productos")]
+    (doseq [row rows]
+      (future (update-inventory (:id row))))))
 ;; End update-inventory

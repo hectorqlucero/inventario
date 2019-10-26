@@ -1,12 +1,13 @@
 (ns sk.proutes.compras
   (:require [cheshire.core :refer [generate-string]]
             [selmer.parser :refer [render-file]]
-            [noir.session :as session]
-            [sk.models.crud :refer [db Query Save Delete]]
+            [sk.models.crud :refer [db 
+                                    build-postvars 
+                                    Query 
+                                    Save 
+                                    Delete]]
             [sk.models.grid :refer :all]
-            [sk.models.util :refer [capitalize-words
-                                    update-inventory
-                                    format-date-internal
+            [sk.models.util :refer [update-inventory
                                     parse-int
                                     fix-id
                                     get-session-id]]))
@@ -64,11 +65,7 @@
 (defn compras-save [{params :params}]
   (let [id (fix-id (:id params))
         producto_id (:producto_id params)
-        postvars {:id id
-                  :provedor_id (:provedor_id params)
-                  :producto_id producto_id
-                  :num_recibido (:num_recibido params)
-                  :compra_fecha (format-date-internal (:compra_fecha params))}
+        postvars (build-postvars "compras" params)
         result (Save db :compras postvars ["id = ?" id])]
     (if (seq result)
       (do

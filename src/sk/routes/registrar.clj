@@ -1,14 +1,16 @@
 (ns sk.routes.registrar
   (:require [cheshire.core :refer [generate-string]]
             [selmer.parser :refer [render-file]]
-            [noir.session :as session]
             [noir.util.crypt :as crypt]
-            [noir.response :refer [redirect]]
-            [sk.models.crud :refer [db Query Save Update]]
-            [sk.models.email :refer [host send-email]]
+            [sk.models.crud :refer [db 
+                                    build-postvars
+                                    Query 
+                                    Save 
+                                    Update]]
+            [sk.models.email :refer [host 
+                                     send-email]]
             [sk.models.util :refer [get-session-id
                                     get-reset-url
-                                    capitalize-words
                                     check-token
                                     create-token]]))
 
@@ -23,14 +25,16 @@
 
 (defn registrar! [{params :params}]
   "Postear los datos de registro de un nuevo cliente el la tabla usuarios"
-  (let [email (or (:email params) "0")
-        postvars {:email (clojure.string/lower-case email)
-                  :username (clojure.string/lower-case email)
-                  :firstname (capitalize-words (:firstname params))
-                  :lastname (capitalize-words (:lastname params))
-                  :password (crypt/encrypt (:password params))
-                  :level "U"
-                  :active "T"}
+  (let [email (clojure.string/lower-case (or (:email params) "0"))
+        password (:password params)
+        params (assoc params 
+                      :level "u"
+                      :active "t"
+                      :password (crypt/encrypt password)
+                      :username email)
+        postvars (assoc (build-postvars "users" params)
+                        :email email
+                        :username email)
         result (Save db :users postvars ["username = ?" email])]
     (if (seq result)
       (generate-string {:url "/login"})

@@ -1,6 +1,7 @@
 (ns sk.routes.home
   (:require [cheshire.core :refer [generate-string]]
-            [sk.models.crud :refer [db Query]]
+            [sk.models.crud :refer [db 
+                                    Query]]
             [sk.models.util :refer [get-session-id]]
             [noir.session :as session]
             [noir.util.crypt :as crypt]

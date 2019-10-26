@@ -1,14 +1,16 @@
 (ns sk.proutes.inventario
   (:require [cheshire.core :refer [generate-string]]
             [selmer.parser :refer [render-file]]
-            [noir.session :as session]
-            [noir.response :refer [redirect]]
-            [sk.models.crud :refer [db Query Save Delete]]
+            [sk.models.crud :refer [db 
+                                    build-postvars 
+                                    Query 
+                                    Save 
+                                    Delete]]
             [sk.models.grid :refer :all]
             [sk.models.util :refer [parse-int
                                     fix-id
                                     get-session-id
-                                    capitalize-words]]))
+                                    update-all-inventory]]))
 
 (defn inventario [request]
   (render-file "sk/proutes/inventario/inventario.html" {:title "Inventario"
@@ -30,6 +32,7 @@
 
 (defn grid-json [{params :params}]
   (try
+    (doall (update-all-inventory))
     (let [table "productos"
           scolumns (convert-search-columns search-columns)
           aliases aliases-columns
@@ -90,18 +93,12 @@
 
 (defn productos-save [{params :params}]
   (let [id (fix-id (:id params))
-        postvars {:id id
-                  :p_nombre (capitalize-words (:p_nombre params))
-                  :n_parte (capitalize-words (:n_parte params))
-                  :p_etiqueta (capitalize-words (:p_etiqueta params))
-                  :inv_inicio (:inv_inicio params)
-                  :inv_recibido (:inv_recibido params)
-                  :inv_enviado (:inv_enviado params)
-                  :inv_en_mano (:inv_en_mano params)
-                  :r_minimo (:r_minimo params)}
+        postvars (build-postvars "productos" params)
         result (Save db :productos postvars ["id = ?" id])]
     (if (seq result)
-      (generate-string {:success "Correctamente Processado!"})
+      (do
+        (doall (update-all-inventory))
+        (generate-string {:success "Correctamente Processado!"}))
       (generate-string {:error "No se pudo processar!"}))))
 
 (defn productos-delete [{params :params}]

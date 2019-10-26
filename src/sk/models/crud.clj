@@ -1,6 +1,8 @@
 (ns sk.models.crud
   (:require [clojure.java.io :as io]
-            [clojure.java.jdbc :as j]))
+            [clojure.string :as st]
+            [clojure.java.jdbc :as j])
+  (:import java.text.SimpleDateFormat))
 
 (defn get-config []
   (binding [*read-eval* false]
@@ -132,12 +134,68 @@
         (j/insert! t-con table (cleanup row) {:entities (j/quoted \`)})
         result))))
 
+(defn crud-fix-id [v]
+  (if (clojure.string/blank? v) nil v))
+
+(defn crud-capitalize-words
+  "Captitalizar todas las palabras en una hilera"
+  [s]
+  (->> (clojure.string/split (str s) #"\b")
+       (map clojure.string/capitalize)
+       (clojure.string/join)))
+
+(defn crud-format-date-internal [s]
+  "Convert a MM/dd/yyyy format date to yyyy-MM-dd format using a string as a date
+   eg. 02/01/1997 -> 1997-02-01"
+  (if (not-empty s)
+    (try
+      (do
+        (.format
+          (SimpleDateFormat. "yyyy-MM-dd")
+          (.parse
+            (SimpleDateFormat. "MM/dd/yyyy") s)))
+      (catch Exception e nil))
+    nil))
+
+(defn get-table-describe [table]
+  (Query db (str "DESCRIBE " table)))
+
+(defn get-table-columns [table]
+  (map #(keyword (:field %)) (get-table-describe table)))
+
+(defn get-table-types [table]
+  (map #(keyword (:type %)) (get-table-describe table)))
+
 (defn get-table-columns [table]
   "Get table column names in a vector"
   (let [the-fields (Query db (str "DESCRIBE " table))
         tfields (map #(keyword (:field %)) the-fields)]
     tfields))
 
+(defn get-table-columns [table]
+  (map #(keyword (:field %)) (get-table-describe table)))
+
+(defn get-table-types [table]
+  (map #(keyword (:type %)) (get-table-describe table)))
+
+(defn process-field [params field field-type field-key]
+  (let [value (str ((keyword field) params))
+        field-type (st/lower-case field-type)]
+    (cond
+      (st/includes? field-type "varchar") (crud-capitalize-words value)
+      (st/includes? field-type "char") (st/upper-case value)
+      (st/includes? field-type "tinytext") (crud-capitalize-words value)
+      (st/includes? field-type "text") (crud-capitalize-words value)
+      (st/includes? field-type "mediumtext") (crud-capitalize-words value)
+      (st/includes? field-type "longtext") (crud-capitalize-words value)
+      (st/includes? field-type "date") (crud-format-date-internal value)
+      :else value)))
+
 (defn build-postvars [table params]
-  (let [fields (get-table-columns table)]
-    (into {} (map (fn [x] (if (x params) {x (str (x params))})) fields))))
+  "Build post vars for table and process by type"
+  (let [td (get-table-describe table)]
+    (into {}
+          (map (fn [x]
+                 {(keyword (:field x))
+                  (process-field params (:field x) (:type x) (:key x))
+                  }) td))))
