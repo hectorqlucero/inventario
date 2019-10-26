@@ -184,10 +184,6 @@
     (cond
       (st/includes? field-type "varchar") (crud-capitalize-words value)
       (st/includes? field-type "char") (st/upper-case value)
-      (st/includes? field-type "tinytext") (crud-capitalize-words value)
-      (st/includes? field-type "text") (crud-capitalize-words value)
-      (st/includes? field-type "mediumtext") (crud-capitalize-words value)
-      (st/includes? field-type "longtext") (crud-capitalize-words value)
       (st/includes? field-type "date") (crud-format-date-internal value)
       :else value)))
 
