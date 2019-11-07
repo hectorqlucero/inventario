@@ -2,7 +2,7 @@
 
 (defn reordenar-view [title rows]
   (def cnt (atom 0))
-  [:div.table-responsive
+  [:div.table-responsive.table-sm
    [:table.table.table-striped.w-auto
     [:caption {:style "caption-side: top;"} title]
     [:thead.thead-dark

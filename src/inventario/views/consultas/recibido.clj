@@ -23,8 +23,8 @@
     [:tr [:td {:colspan 3} " "]]))
 
 (defn recibido-view [title prows rows trows]
-  [:div.table-responsive.table-sm.table-hover
-   [:table.table.w-auto
+  [:div.table-responsive.table-sm
+   [:table.table.table-striped.w-auto
     [:caption {:style "caption-side: top;"} title]
     [:thead.thead-dark
      [:tr
