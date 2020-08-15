@@ -5,10 +5,10 @@
                                             current_year
                                             get-session-id]]
             [clojure.java.io :as io]
-            [ondrs.barcode :refer :all]
+            [ondrs.barcode :refer [generate
+                                   write!]]
             [inventario.views.barcodes :refer [barcodes-view]]
-            [inventario.views.layout :refer :all])
-  (:import (net.sourceforge.barbecue Barcode)))
+            [inventario.views.layout :refer [application]]))
 
 ;; Start barcode
 (def temp-dir
@@ -29,8 +29,8 @@
 
 (defn create-barcode [id]
   (let [id (zpl id 8) 
-        barcode (generate-barcode id)
-        result (write! barcode (str temp-dir id ".jpg"))]
+        barcode (generate-barcode id)]
+    (write! barcode (str temp-dir id ".jpg"))
     (str "/uploads/" id ".jpg")))
 
 (defn get-barcodes []
@@ -51,8 +51,9 @@
    ORDER BY
    firstname,lastname")
 
-(defn get-users []
+(defn get-users
   "Regresa todos los usuarios o vacio :ex: (get-users)"
+  []
   (Query db [get-users-sql]))
 ;; End get-users
 
@@ -63,13 +64,15 @@
    FROM users
    WHERE email = ?")
 
-(defn get-users-email [email]
+(defn get-users-email
   "Regresa el correo del usuario o nulo"
+  [email]
   (first (Query db [get-users-email-sql email])))
 ;; End get-users-email
 
-(defn months []
+(defn months
   "Regresa un arreglo de meses en español ex: (months)"
+  []
   (list
    {:value 1 :text "Enero"}
    {:value 2 :text "Febrero"}
@@ -84,9 +87,10 @@
    {:value 11 :text "Noviembre"}
    {:value 12 :text "Diciembre"}))
 
-(defn years [p n]
+(defn years
   "Genera listado para dropdown dependiendo de p=anterioriores de este año, n=despues de este año,
    ex: (years 5 4)"
+  [p n]
   (let [year   (parse-int (current_year))
         pyears (for [n (range (parse-int p) 0 -1)] {:value (- year n) :text (- year n)})
         nyears (for [n (range 0 (+ (parse-int n) 1))] {:value (+ year n) :text (+ year n)})
@@ -101,8 +105,9 @@
    FROM productos
    ORDER BY p_etiqueta")
 
-(defn get-productos []
+(defn get-productos
   "Regresa todos los productos"
+  []
   (Query db get-productos-sql))
 ;; End get-productos
 
@@ -114,7 +119,8 @@
    FROM provedores
    ORDER BY provedor")
 
-(defn get-provedores []
+(defn get-provedores
   "Regresa todos los provedores"
+  []
   (Query db get-provedores-sql))
 ;; End get-provedores
