@@ -75,8 +75,9 @@
 (defn application [title ok js & content]
   (html5 {:ng-app (:site-name config) :lang "es"}
          [:head
-          [:title (if title title
-                      (:site-name config))]
+          [:title (if title
+                    title
+                    (:site-name config))]
           [:meta {:charset "UTF-8"}]
           [:meta {:name "viewport"
                   :content "width=device-width, initial-scale=1"}]
