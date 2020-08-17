@@ -30,7 +30,7 @@
 
 (defn get-barcodes [_]
   (let [rows (Query db ["SELECT id,p_etiqueta FROM productos ORDER BY id"])
-        title "Codigo de barras"
+        title "Codigo de QR"
         ok (get-session-id)
         result (map #(assoc % :id (create-barcode (:id %))) rows)
         content (barcodes-view result)]
